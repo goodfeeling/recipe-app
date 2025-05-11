@@ -26,7 +26,7 @@ type ApiResponse<T = any> = {
     };
   
     try {
-      const response = await fetch(url, mergedOptions);
+      const response = await fetch(process.env.EXPO_PUBLIC_API_URL+url, mergedOptions);
   
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -52,4 +52,5 @@ type ApiResponse<T = any> = {
   const post = <T>(url: string, body: any) =>
     request<T>(url, { method: "POST", body: JSON.stringify(body) });
   
-  export { request, get, post };
+  export { get, post, request };
+

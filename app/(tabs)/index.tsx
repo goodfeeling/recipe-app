@@ -1,90 +1,108 @@
-import { post } from "@/utils/fetchTools";
+import { fetchRecipeList } from "@/apis/recipeApi";
+import { RecipeItem } from "@/types/recipeType";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-
-type Post = {
-  id: number;
-  name: string; // 名称
-  description: string; // 描述
-  author: string; // 作者
-  cover_img: string; // 封面图
-  view_count: number; // 浏览量
-  collect_count: number; // 收藏量
-};
 
 // 修改 DynamicScreen 以支持 route.params
 type DynamicScreenProps = {
   route: RouteProp<ParamListBase, string>;
 };
 
-interface RecipeListResponse {
-  code: number;
-  data: {
-    list: Post[];
-    page_index: number;
-    page_size: number;
-    total: number;
-    total_pages: number;
-  };
-  msg: string;
-}
-
-const PostItem = ({ item }: { item: Post }) => {
+const PostItem = ({ item }: { item: RecipeItem }) => {
   return (
-  <View style={styles.postContainer}>
-    <Image source={require('@/assets/images/react-logo.png')} style={styles.coverImage} />
-    <View style={styles.postContent}>
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.description} numberOfLines={2}>
-        {item.description}
-      </Text>
-      <View style={styles.infoRow}>
-        <Text style={styles.author}>作者：{item.author}</Text>
-        <Text style={styles.views}>浏览：{item.view_count}</Text>
-        <Text style={styles.collects}>收藏：{item.collect_count}</Text>
+    <View style={styles.postContainer}>
+      <Image
+        source={require("@/assets/images/react-logo.png")}
+        style={styles.coverImage}
+      />
+      <View style={styles.postContent}>
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.description} numberOfLines={2}>
+          {item.description}
+        </Text>
+        <View style={styles.infoRow}>
+          <Text style={styles.author}>作者：{item.author}</Text>
+          <Text style={styles.views}>浏览：{item.view_count}</Text>
+          <Text style={styles.collects}>收藏：{item.collect_count}</Text>
+        </View>
       </View>
     </View>
-  </View>
-)
+  );
 };
+// 定义接口返回统一结构
+interface ApiResponse {
+  list: RecipeItem[];
+  code: number;
+  data: {
+    list: RecipeItem[];
+  };
+}
 
 // 模拟动态页面组件
 function DynamicScreen({ route }: DynamicScreenProps) {
   const { title } = route.params as { title: string };
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [list, setList] = useState<RecipeItem[]>([]);
+  const [pageInfo, setPageInfo] = useState({ pageindex: 1, pagesize: 10 });
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await post<RecipeListResponse>(
-        `http://172.26.216.120:3000/api/v1/recipe/list`,
-        {
-          pagesize: 10,
-          pageindex: 1,
-          name: title,
-        }
-      );
+  const fetchData = async (pageToLoad: number) => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+
+    try {
+      const result = await fetchRecipeList<ApiResponse>({
+        pagesize: pageInfo.pagesize,
+        pageindex: pageToLoad,
+        name: title,
+      });
 
       if (result.success && result.data?.code === 200) {
-        setPosts(result.data.data.list);
+        const newData = result.data.data.list;
+        setList((prevList) => [...prevList, ...newData]);
+        setPageInfo((prev) => ({ ...prev, pageindex: pageToLoad }));
+        // 假设接口返回的数据小于 pagesize 表示没有更多了
+        if (newData.length < pageInfo.pagesize) {
+          setHasMore(false);
+        }
       }
-    };
-    fetchData();
+    } catch (error) {
+      console.error("获取食谱列表失败:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // 切换 tab 时重置状态
+    setPageInfo({ pageindex: 1, pagesize: 10 });
+    setList([]);
+    setHasMore(true);
+    fetchData(1);
   }, [title]);
 
   return (
     <View style={styles.container}>
-      {posts.length > 0 ? (
+      {list.length > 0 ? (
         <FlatList
-          data={posts}
-          keyExtractor={(item, index) => item.id.toString()}
+          data={list}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => <PostItem item={item} />}
+          onEndReached={() => {
+            if (hasMore) {
+              fetchData(pageInfo.pageindex + 1);
+            }
+          }}
+          onEndReachedThreshold={0.5}
         />
-     
+        
       ) : (
         <Text>没有数据</Text>
       )}
+      {isLoading && <Text>加载中...</Text>}
     </View>
   );
 }
