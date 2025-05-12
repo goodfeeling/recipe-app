@@ -6,6 +6,7 @@ export type RecipeItem = {
   cover_img: string;
   view_count: number;
   collect_count: number;
+  is_collected: boolean;
 };
 
 export type RecipeListResponse = {

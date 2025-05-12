@@ -3,7 +3,7 @@ import { RecipeItem } from "@/types/recipeType";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // 修改 DynamicScreen 以支持 route.params
 type DynamicScreenProps = {
@@ -11,6 +11,7 @@ type DynamicScreenProps = {
 };
 
 const PostItem = ({ item }: { item: RecipeItem }) => {
+  const [isCollected,setIsCollected] = useState(item.is_collected);
   return (
     <View style={styles.postContainer}>
       <Image
@@ -28,9 +29,25 @@ const PostItem = ({ item }: { item: RecipeItem }) => {
           <Text style={styles.collects}>收藏：{item.collect_count}</Text>
         </View>
       </View>
+
+      <TouchableOpacity
+        style={styles.collectButton}
+        onPress={async () => {
+          const newCollectState = !isCollected;
+          setIsCollected(newCollectState);
+
+          
+        }}
+      >
+        <Text style={[styles.collectText,isCollected && styles.collected]}>
+          ❤
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+
 // 定义接口返回统一结构
 interface ApiResponse {
   list: RecipeItem[];
@@ -145,10 +162,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginBottom: 16,
     elevation: 2, // Android 阴影
-    shadowColor: "#000", // iOS 阴影
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)", // 使用标准 boxShadow
   },
   coverImage: {
     width: 100,
@@ -187,4 +201,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999",
   },
+
+  collectButton: {
+  position: 'absolute',
+  top: 8,
+  right: 8,
+  padding: 4,
+  zIndex: 1,
+},
+collectText: {
+  fontSize: 18,
+  color: '#999',
+},
+collected: {
+  color: 'red',
+},
 });
