@@ -4,6 +4,7 @@ import { RecipeItem } from "@/types/recipeType";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -20,54 +21,64 @@ type DynamicScreenProps = {
 };
 
 const PostItem = ({ item }: { item: RecipeItem }) => {
+  const router = useRouter();
   const [isCollected, setIsCollected] = useState(item.is_collected);
+
+  const handlePress = () => {
+    router.push({
+      pathname: '/recipe-detail',
+      params: {recipe_id: item.id}
+    })
+  }
   return (
-    <View style={styles.postContainer}>
-      <Image
-        source={require("@/assets/images/react-logo.png")}
-        style={styles.coverImage}
-      />
-      <View style={styles.postContent}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.description} numberOfLines={2}>
-          {item.description}
-        </Text>
-        <View style={styles.infoRow}>
-          <Text style={styles.author}>作者：{item.author}</Text>
-          <Text style={styles.views}>浏览：{item.view_count}</Text>
-          <Text style={styles.collects}>收藏：{item.collect_count}</Text>
-        </View>
-      </View>
-
-      <TouchableOpacity
-        style={styles.collectButton}
-        onPress={async () => {
-          const newCollectState =  !isCollected;
-          setIsCollected(newCollectState);
-
-          try {
-            const response = await fetchCollectRecipe({
-              recipe_id: item.id,
-            });
-            console.log(response);
-            
-            if (response.data?.code !== 0) {
-              setIsCollected(!newCollectState); // 回滚
-              Alert.alert("操作失败", "请稍后再试");
-            }
-          } catch (error) {
-            setIsCollected(!newCollectState); // 回滚
-            Alert.alert("网络错误", "无法连接服务器");
-          }
-        }}
-      >
-        <FontAwesome
-          name={isCollected ? "heart" : "heart-o"}
-          size={28}
-          color={isCollected ? "red" : "#999"}
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.postContainer}>
+        <Image
+          source={require("@/assets/images/react-logo.png")}
+          style={styles.coverImage}
         />
-      </TouchableOpacity>
-    </View>
+        <View style={styles.postContent}>
+          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.description} numberOfLines={2}>
+            {item.description}
+          </Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.author}>作者：{item.author}</Text>
+            <Text style={styles.views}>浏览：{item.view_count}</Text>
+            <Text style={styles.collects}>收藏：{item.collect_count}</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={styles.collectButton}
+          onPress={async () => {
+            const newCollectState = !isCollected;
+            setIsCollected(newCollectState);
+
+            try {
+              const response = await fetchCollectRecipe({
+                recipe_id: item.id,
+              });
+              console.log(response);
+
+              if (response.data?.code !== 0) {
+                setIsCollected(!newCollectState); // 回滚
+                Alert.alert("操作失败", "请稍后再试");
+              }
+            } catch (error) {
+              setIsCollected(!newCollectState); // 回滚
+              Alert.alert("网络错误", "无法连接服务器");
+            }
+          }}
+        >
+          <FontAwesome
+            name={isCollected ? "heart" : "heart-o"}
+            size={28}
+            color={isCollected ? "red" : "#999"}
+          />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 };
 
