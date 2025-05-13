@@ -1,17 +1,26 @@
+import { fetchCollectRecipe } from "@/apis/collection";
 import { fetchRecipeList } from "@/apis/recipeApi";
 import { RecipeItem } from "@/types/recipeType";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
+import {
+  Alert,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 // 修改 DynamicScreen 以支持 route.params
 type DynamicScreenProps = {
   route: RouteProp<ParamListBase, string>;
 };
 
 const PostItem = ({ item }: { item: RecipeItem }) => {
-  const [isCollected,setIsCollected] = useState(item.is_collected);
+  const [isCollected, setIsCollected] = useState(item.is_collected);
   return (
     <View style={styles.postContainer}>
       <Image
@@ -33,20 +42,34 @@ const PostItem = ({ item }: { item: RecipeItem }) => {
       <TouchableOpacity
         style={styles.collectButton}
         onPress={async () => {
-          const newCollectState = !isCollected;
+          const newCollectState =  !isCollected;
           setIsCollected(newCollectState);
 
-          
+          try {
+            const response = await fetchCollectRecipe({
+              recipe_id: item.id,
+            });
+            console.log(response);
+            
+            if (response.data?.code !== 0) {
+              setIsCollected(!newCollectState); // 回滚
+              Alert.alert("操作失败", "请稍后再试");
+            }
+          } catch (error) {
+            setIsCollected(!newCollectState); // 回滚
+            Alert.alert("网络错误", "无法连接服务器");
+          }
         }}
       >
-        <Text style={[styles.collectText,isCollected && styles.collected]}>
-          ❤
-        </Text>
+        <FontAwesome
+          name={isCollected ? "heart" : "heart-o"}
+          size={28}
+          color={isCollected ? "red" : "#999"}
+        />
       </TouchableOpacity>
     </View>
   );
 };
-
 
 // 定义接口返回统一结构
 interface ApiResponse {
@@ -115,7 +138,6 @@ function DynamicScreen({ route }: DynamicScreenProps) {
           }}
           onEndReachedThreshold={0.5}
         />
-        
       ) : (
         <Text>没有数据</Text>
       )}
@@ -203,17 +225,17 @@ const styles = StyleSheet.create({
   },
 
   collectButton: {
-  position: 'absolute',
-  top: 8,
-  right: 8,
-  padding: 4,
-  zIndex: 1,
-},
-collectText: {
-  fontSize: 18,
-  color: '#999',
-},
-collected: {
-  color: 'red',
-},
+    position: "absolute",
+    top: 8,
+    right: 8,
+    padding: 4,
+    zIndex: 1,
+  },
+  collectText: {
+    fontSize: 18,
+    color: "#999",
+  },
+  collected: {
+    color: "red",
+  },
 });
