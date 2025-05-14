@@ -1,5 +1,5 @@
 import { fetchRegister } from "@/apis/userApi";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -12,6 +12,10 @@ import {
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
+  navigation.setOptions({
+    title: "注册",
+  });
   const [formData, setFormData] = useState({
     user_name: "",
     nickname: "",
@@ -43,7 +47,7 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     if (!validate()) return;
     setLoading(true);
-    
+
     try {
       const response = await fetchRegister(formData);
 
@@ -139,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
   input: {
     height: 50,

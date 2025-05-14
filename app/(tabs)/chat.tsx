@@ -1,10 +1,13 @@
+import { useNavigation } from 'expo-router';
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 
-export default function TrendScreen() {
+export default function ChatSheetScreen() {
+
   return (
     <View style={styles.container}>
-      <Text style={styles.welcome}>Trend</Text>
+      <Text style={styles.welcome}>Collect</Text>
     </View>
   );
 }

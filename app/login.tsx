@@ -1,6 +1,6 @@
-import { fetchLogin, LoginResponse } from '@/apis/userApi';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { fetchLogin, LoginResponse } from "@/apis/userApi";
+import { useNavigation, useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,46 +10,48 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
+} from "react-native";
 
-
-export default function LoginScreen({ navigation }: any) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-const router = useRouter();
+export default function LoginScreen() {
+   const navigation = useNavigation();
+    navigation.setOptions({
+      title: "登录",
+    });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
   const handleLogin = async () => {
     if (!username || !password) {
-      setError('请输入用户名和密码');
+      setError("请输入用户名和密码");
       return;
     }
 
     // TODO: 替换为真实登录逻辑
-    console.log('提交登录:', { username, password });
+    console.log("提交登录:", { username, password });
 
     try {
-          const result = await fetchLogin<LoginResponse>({
-            user_name:username,password
-          });
-          
-          console.log(result);
-          
-          if (result.success && result.data?.code === 0){
-            // 示例：跳转到主页
-             router.navigate("/"); // 跳转到登录页
-          }
-        } catch (error) {
-          console.error("登录失败:", error);
+      const result = await fetchLogin<LoginResponse>({
+        user_name: username,
+        password,
+      });
 
-        } finally {
+      console.log(result);
 
-        }
+      if (result.success && result.data?.code === 0) {
+        // 示例：跳转到主页
+        router.navigate("/"); // 跳转到登录页
+      }
+    } catch (error) {
+      console.error("登录失败:", error);
+    } finally {
+    }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>登录</Text>
@@ -78,10 +80,10 @@ const router = useRouter();
         </TouchableOpacity>
 
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.navigate('/')}>
+          <TouchableOpacity onPress={() => router.navigate("/")}>
             <Text style={styles.linkText}>忘记密码？</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.navigate('/register')}>
+          <TouchableOpacity onPress={() => router.navigate("/register")}>
             <Text style={styles.linkText}>没有账号？立即注册</Text>
           </TouchableOpacity>
         </View>
@@ -93,50 +95,50 @@ const router = useRouter();
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: "#F5FCFF",
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 20,
   },
   errorText: {
-    color: 'red',
-    textAlign: 'center',
+    color: "red",
+    textAlign: "center",
     marginBottom: 10,
   },
   input: {
     height: 50,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   loginButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   loginButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   footer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   linkText: {
-    color: '#007BFF',
+    color: "#007BFF",
     marginVertical: 5,
     fontSize: 14,
   },

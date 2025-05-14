@@ -32,17 +32,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="trend"
+        name="recipe"
         options={{
-          title: '趋势',
-          tabBarIcon: ({ color }) => <FontAwesome6 name="arrow-trend-up" size={28}  color={color} />,
+          title: '分类',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" size={28}  color={color} />,
         }}
       />
       <Tabs.Screen 
-        name="collect"
+        name="chat"
         options={{
-          title:"收藏",
-          tabBarIcon: ({color}) => <FontAwesome6 name="heart-circle-plus" size={28}  color={color} />,
+          title:"AI聊天",
+          tabBarIcon: ({color}) => <FontAwesome6 name="robot" size={28}  color={color} />,
         }}
       />
       <Tabs.Screen 

@@ -1,5 +1,5 @@
 import { fetchRecipeDetail } from "@/apis/recipeApi";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -29,6 +29,8 @@ interface RecipeDetailProps {
   is_collected: boolean;
 }
 export default function RecipeDetailScreen() {
+  const navigation = useNavigation();
+
   const { recipe_id } = useLocalSearchParams<SearchParams>();
   const [recipe, setRecipe] = useState<RecipeDetailProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,10 +51,12 @@ export default function RecipeDetailScreen() {
       const result = await fetchRecipeDetail({
         id: idNumber,
       });
-      console.log();
 
-      if (result.success && result.data?.data.code === 0) {
-        setRecipe(result.data?.data.data);
+      if (result.success && result.data?.code === 0) {
+        setRecipe(result.data?.data);
+        navigation.setOptions({
+          title: result.data?.data.name,
+        });
       } else {
         setRecipe(null); // 明确表示没有数据
       }

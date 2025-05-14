@@ -1,22 +1,28 @@
 import {
-    fetchGetUser,
-    fetchUpdateUserInfo,
-    LoginResponse,
+  fetchGetUser,
+  fetchUpdateUserInfo,
+  LoginResponse,
 } from "@/apis/userApi";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    Image,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "expo-router";
 
 export default function ProfileDetailScreen() {
+
+   const navigation = useNavigation();
+    navigation.setOptions({
+      title: "我的资料",
+    });
   const [isEditing, setIsEditing] = useState(false);
 
   const [userInfo, setUserInfo] = useState<{
