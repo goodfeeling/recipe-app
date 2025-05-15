@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -15,21 +16,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
 // 修改 DynamicScreen 以支持 route.params
 type DynamicScreenProps = {
   route: RouteProp<ParamListBase, string>;
 };
-
+const { width } = Dimensions.get("window");
 const PostItem = ({ item }: { item: RecipeItem }) => {
   const router = useRouter();
   const [isCollected, setIsCollected] = useState(item.is_collected);
 
   const handlePress = () => {
     router.push({
-      pathname: '/recipe-detail',
-      params: {recipe_id: item.id}
-    })
-  }
+      pathname: "/recipe-detail",
+      params: { recipe_id: item.id },
+    });
+  };
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.postContainer}>
@@ -161,23 +163,50 @@ const Tab = createMaterialTopTabNavigator();
 export default function HomeScreen() {
   const tabs = ["豆角", "茄子", "胡萝卜", "南瓜"];
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarScrollEnabled: true, // 启用横向滚动
-        tabBarIndicatorStyle: { backgroundColor: "blue" }, // 可选：自定义指示器样式
-        tabBarLabelStyle: { width: 120, fontSize: 14 }, // 可选：设置每个 tab 标签的宽度和字体大小
-        tabBarStyle: { backgroundColor: "#f8f8f8" }, // 可选：设置 tab 条背景色
-      }}
-    >
-      {tabs.map((item, index) => (
-        <Tab.Screen
-          key={index}
-          name={item}
-          component={DynamicScreen}
-          initialParams={{ title: item }}
-        />
-      ))}
-    </Tab.Navigator>
+    <View style={{ flex: 1 }}>
+      <View style={{  marginBottom: 10 }}>
+        <SwiperFlatList
+          autoplay
+          autoplayDelay={2}
+          autoplayLoop
+          index={2}
+          showPagination
+        >
+          <View style={[styles.child, { backgroundColor: "tomato" }]}>
+            <Text style={styles.text}>1</Text>
+          </View>
+          <View style={[styles.child, { backgroundColor: "thistle" }]}>
+            <Text style={styles.text}>2</Text>
+          </View>
+          <View style={[styles.child, { backgroundColor: "skyblue" }]}>
+            <Text style={styles.text}>3</Text>
+          </View>
+          <View style={[styles.child, { backgroundColor: "teal" }]}>
+            <Text style={styles.text}>4</Text>
+          </View>
+        </SwiperFlatList>
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarScrollEnabled: true, // 启用横向滚动
+            tabBarIndicatorStyle: { backgroundColor: "blue" }, // 可选：自定义指示器样式
+            tabBarLabelStyle: { width: 120, fontSize: 14 }, // 可选：设置每个 tab 标签的宽度和字体大小
+            tabBarStyle: { backgroundColor: "#f8f8f8" }, // 可选：设置 tab 条背景色
+          }}
+        >
+          {tabs.map((item, index) => (
+            <Tab.Screen
+              key={index}
+              name={item}
+              component={DynamicScreen}
+              initialParams={{ title: item }}
+            />
+          ))}
+        </Tab.Navigator>
+      </View>
+    </View>
   );
 }
 
@@ -249,4 +278,6 @@ const styles = StyleSheet.create({
   collected: {
     color: "red",
   },
+  child: { width, justifyContent: "center" },
+  text: { fontSize: width * 0.5, textAlign: "center" },
 });

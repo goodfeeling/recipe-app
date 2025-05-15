@@ -5860,6 +5860,11 @@ react-native-screens@*, "react-native-screens@>= 4.0.0", react-native-screens@~4
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-swiper-flatlist@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.npmjs.org/react-native-swiper-flatlist/-/react-native-swiper-flatlist-3.2.5.tgz"
+  integrity sha512-pP6Yioo//PgxBf1Ac/utPaAMaCTXF0QW/Q55hQofGtE7B5/hL0nb9u4cXEdgGJslx0oBCkir4AJAbbD5FpWnaA==
+
 react-native-tab-view@^4.0.12:
   version "4.0.12"
   resolved "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-4.0.12.tgz"
@@ -5889,7 +5894,7 @@ react-native-webview@*, react-native-webview@13.13.5:
     escape-string-regexp "^4.0.0"
     invariant "2.2.4"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@>=0.20.0, react-native@0.79.2:
+react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@>=0.20.0, react-native@>=0.59.0, react-native@0.79.2:
   version "0.79.2"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.79.2.tgz"
   integrity sha512-AnGzb56JvU5YCL7cAwg10+ewDquzvmgrMddiBM0GAWLwQM/6DJfGd2ZKrMuKKehHerpDDZgG+EY64gk3x3dEkw==
