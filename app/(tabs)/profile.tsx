@@ -34,8 +34,16 @@ export default function ProfileScreen() {
       title: "我的资料",
       onPress: () => router.push("/profile-detail"),
     },
-    { id: "2", title: "我的收藏",       onPress: () => router.push("/my-collections"), },
-    { id: "3", title: "浏览历史", onPress: () => {} },
+    {
+      id: "2",
+      title: "我的收藏",
+      onPress: () => router.push("/my-collections"),
+    },
+    {
+      id: "3",
+      title: "浏览历史",
+      onPress: () => router.push("/page-view"),
+    },
     { id: "4", title: "设置", onPress: () => {} },
     { id: "5", title: "帮助与反馈", onPress: () => {} },
   ];

@@ -1,26 +1,22 @@
-import { fetchCollectList, fetchCollectRecipe } from "@/apis/collection";
+import { fetchPageViewList } from "@/apis/pv";
 import { RecipeItem } from "@/types/recipeType";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Alert,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    FlatList,
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 
 const PostItem = ({ item }: { item: RecipeItem }) => {
   const navigation = useNavigation();
   navigation.setOptions({
-    title: "我的收藏",
+    title: "历史记录",
   });
   const router = useRouter();
-  const [isCollected, setIsCollected] = useState(item.is_collected);
-
   const handlePress = () => {
     router.push({
       pathname: "/recipe-detail",
@@ -45,34 +41,6 @@ const PostItem = ({ item }: { item: RecipeItem }) => {
             <Text style={styles.collects}>收藏：{item.collect_count}</Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.collectButton}
-          onPress={async () => {
-            const newCollectState = !isCollected;
-            setIsCollected(newCollectState);
-
-            try {
-              const response = await fetchCollectRecipe({
-                recipe_id: item.id,
-              });
-
-              if (response.data?.code !== 0) {
-                setIsCollected(!newCollectState); // 回滚
-                Alert.alert("操作失败", "请稍后再试");
-              }
-            } catch (error) {
-              setIsCollected(!newCollectState); // 回滚
-              Alert.alert("网络错误", "无法连接服务器");
-            }
-          }}
-        >
-          <FontAwesome
-            name={isCollected ? "heart" : "heart-o"}
-            size={28}
-            color={isCollected ? "red" : "#999"}
-          />
-        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -100,7 +68,7 @@ export default function MyCollect() {
     setIsLoading(true);
 
     try {
-      const result = await fetchCollectList<ApiResponse>({
+      const result = await fetchPageViewList<ApiResponse>({
         pagesize: pageInfo.pagesize,
         pageindex: pageToLoad,
       });
