@@ -14,10 +14,6 @@ import {
 } from "react-native";
 
 const PostItem = ({ item }: { item: RecipeItem }) => {
-  const navigation = useNavigation();
-  navigation.setOptions({
-    title: "我的收藏",
-  });
   const router = useRouter();
   const [isCollected, setIsCollected] = useState(item.is_collected);
 
@@ -120,6 +116,7 @@ export default function MyCollect() {
       setIsLoading(false);
     }
   };
+  const navigation = useNavigation();
 
   useEffect(() => {
     // 切换 tab 时重置状态
@@ -127,6 +124,9 @@ export default function MyCollect() {
     setList([]);
     setHasMore(true);
     fetchData(1);
+    navigation.setOptions({
+      title: "我的收藏",
+    });
   }, []);
 
   return (

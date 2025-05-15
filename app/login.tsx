@@ -1,6 +1,6 @@
 import { fetchLogin, LoginResponse } from "@/apis/userApi";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -13,10 +13,8 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
-   const navigation = useNavigation();
-    navigation.setOptions({
-      title: "登录",
-    });
+  const navigation = useNavigation();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -47,6 +45,11 @@ export default function LoginScreen() {
     } finally {
     }
   };
+  useEffect(()=>{
+    navigation.setOptions({
+      title: "登录",
+    });
+  },[])
 
   return (
     <KeyboardAvoidingView

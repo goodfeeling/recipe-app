@@ -18,11 +18,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
 
 export default function ProfileDetailScreen() {
+  const navigation = useNavigation();
 
-   const navigation = useNavigation();
-    navigation.setOptions({
-      title: "我的资料",
-    });
   const [isEditing, setIsEditing] = useState(false);
 
   const [userInfo, setUserInfo] = useState<{
@@ -44,6 +41,9 @@ export default function ProfileDetailScreen() {
 
   // 加载用户信息
   useEffect(() => {
+    navigation.setOptions({
+      title: "我的资料",
+    });
     const loadUserInfo = async () => {
       const response = await fetchGetUser<LoginResponse>();
       if (response.success && response.data?.code === 0) {
@@ -90,7 +90,14 @@ export default function ProfileDetailScreen() {
       if (response.data?.code === 0) {
         Alert.alert("保存成功");
         setUserInfo((prev) =>
-          prev ? { ...prev, nickname: form.nickname, bio: form.bio ,avatar:form.avatar} : null
+          prev
+            ? {
+                ...prev,
+                nickname: form.nickname,
+                bio: form.bio,
+                avatar: form.avatar,
+              }
+            : null
         );
         setIsEditing(false);
       } else {
@@ -130,7 +137,7 @@ export default function ProfileDetailScreen() {
       {/* 头像 */}
       <View style={styles.avatarContainer}>
         <Image
-          source={{ uri:  form.avatar || userInfo?.avatar }}
+          source={{ uri: form.avatar || userInfo?.avatar }}
           style={styles.avatar}
         />
         <TouchableOpacity style={styles.changeAvatarButton} onPress={pickImage}>

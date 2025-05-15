@@ -1,5 +1,5 @@
 import { fetchPageViewList } from "@/apis/pv";
-import { RecipeItem } from "@/types/recipeType";
+import { formatTime } from "@/utils/timeTools";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -8,21 +8,25 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
 
-const PostItem = ({ item }: { item: RecipeItem }) => {
+const PostItem = ({ item }: { item: PageView }) => {
   const navigation = useNavigation();
-  navigation.setOptions({
-    title: "历史记录",
-  });
+
   const router = useRouter();
   const handlePress = () => {
     router.push({
       pathname: "/recipe-detail",
-      params: { recipe_id: item.id },
+      params: { recipe_id: item.recipe.id },
     });
   };
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "历史记录",
+    });
+  }, []);
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.postContainer}>
@@ -31,14 +35,14 @@ const PostItem = ({ item }: { item: RecipeItem }) => {
           style={styles.coverImage}
         />
         <View style={styles.postContent}>
-          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.title}>{item.recipe.name}</Text>
           <Text style={styles.description} numberOfLines={2}>
-            {item.description}
+            {item.recipe.description}
           </Text>
           <View style={styles.infoRow}>
-            <Text style={styles.author}>作者：{item.author}</Text>
-            <Text style={styles.views}>浏览：{item.view_count}</Text>
-            <Text style={styles.collects}>收藏：{item.collect_count}</Text>
+            <Text style={styles.collects}>
+              浏览时间：{formatTime(item.created_at)}
+            </Text>
           </View>
         </View>
       </View>
@@ -48,16 +52,37 @@ const PostItem = ({ item }: { item: RecipeItem }) => {
 
 // 定义接口返回统一结构
 interface ApiResponse {
-  list: RecipeItem[];
+  list: PageView[];
   code: number;
   data: {
-    list: RecipeItem[];
+    list: PageView[];
   };
 }
 
+type RecipeItem = {
+  id: number;
+  name: string;
+  description: string;
+  author: string;
+  cover_img: string;
+  view_count: number;
+  collect_count: number;
+  is_collected: boolean;
+};
+
+type PageView = {
+  id: number;
+  recipe_id: number;
+  user_id: number;
+  recipe: RecipeItem;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+};
+
 // 模拟动态页面组件
 export default function MyCollect() {
-  const [list, setList] = useState<RecipeItem[]>([]);
+  const [list, setList] = useState<PageView[]>([]);
   const [pageInfo, setPageInfo] = useState({ pageindex: 1, pagesize: 10 });
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);

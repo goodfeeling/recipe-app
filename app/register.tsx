@@ -1,6 +1,6 @@
 import { fetchRegister } from "@/apis/userApi";
 import { useNavigation, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -13,9 +13,7 @@ import {
 export default function RegisterScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  navigation.setOptions({
-    title: "注册",
-  });
+
   const [formData, setFormData] = useState({
     user_name: "",
     nickname: "",
@@ -64,6 +62,12 @@ export default function RegisterScreen() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "注册",
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
