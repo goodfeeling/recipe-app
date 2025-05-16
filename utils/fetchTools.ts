@@ -57,6 +57,13 @@ async function request<T>(
 const get = <T>(url: string) => request<T>(url, { method: "GET" });
 const post = <T>(url: string, body: any) =>
   request<T>(url, { method: "POST", body: JSON.stringify(body) });
+const upload = <T>(url:string,body:FormData) => request<T>(url,{
+  method: "POST",
+  body,
+  headers: {
+    "Content-Type": "multipart/form-data"
+  }
+})
 
-export { get, post, request };
+export { get, post, request, upload };
 

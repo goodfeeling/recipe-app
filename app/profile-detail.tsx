@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 
+import { fetchUpload } from "@/apis/upload";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
 
@@ -112,15 +113,24 @@ export default function ProfileDetailScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes:['images'],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-
     if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      setForm((prev) => ({ ...prev, avatar: uri }));
+      const formData = new FormData();
+      formData.append("file", {
+        uri: result.assets[0].uri,
+        type: "image/jpeg",
+        name: "photo.jpg",
+      } as any);
+
+      const response = await fetchUpload(formData);
+      if (response.data?.code === 200) {
+        setForm((prev) => ({ ...prev, avatar: response.data?.data }));
+        setIsEditing(true);
+      }
     }
   };
 
