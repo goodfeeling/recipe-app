@@ -1,25 +1,30 @@
-import { StyleSheet, Text, View } from 'react-native';
-
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
 export default function ChatSheetScreen() {
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Collect</Text>
+  const renderItem = ({ item, index }: { item: any; index: number }) => (
+    <View style={styles.item}>
+      <Image source={require("@/assets/images/react-logo.png")} />
+      <Text> 肉类</Text>
     </View>
+  );
+  return (
+    <FlatList
+        data={[...Array(20)]}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => index.toString()}
+        numColumns={3}
+      ></FlatList>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+
+  item: {
     flex:1,
-    justifyContent:'center',
-    alignItems:'center',
-    backgroundColor: '#F%FCFF'
+    width: "30%", // 可保留作为最小宽度限制
+    maxWidth: "33.33%", // 控制最大不超过三分之一
+    alignItems:"center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 20
-  }
 });
